@@ -53,6 +53,32 @@ public class EventManager : MonoBehaviour {
                 listenList[i].OnEvent(eventType, sender, param);
         }
     }
+    
+    public void RemoveEvent(EVENT_TYPE eventType)
+    {
+        listeners.Remove(eventType);
+    }
 
+    public void RemoveRedundancies()
+    {
+        Dictionary<EVENT_TYPE, List<EventListener>> TmpListeners = new Dictionary<EVENT_TYPE, List<EventListener>>();
+
+        foreach (KeyValuePair<EVENT_TYPE, List<EventListener>> Item in listeners)
+        {
+            for(int i = Item.Value.Count-1; i >= 0; i--)
+            {
+                if (Item.Value[i].Equals(null))
+                    Item.Value.RemoveAt(i);
+            }
+            if (Item.Value.Count > 0)
+                TmpListeners.Add(Item.Key, Item.Value);
+        }
+        listeners = TmpListeners;
+    }
+
+    private void OnLevelWasLoaded(int level)
+    {
+        RemoveRedundancies();
+    }
 
 }
